@@ -10,23 +10,31 @@ public class CoffeeMachine {
     private static int money = 550;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        info();
-        System.out.println("Write action (buy, fill, take): ");
-        String command = sc.nextLine();
-        switch (command.toLowerCase()) {
-            case "buy":
-                buy(sc);
-                break;
-            case "fill":
-                fill(sc);
-                break;
-            case "take":
-                take();
-                break;
-            default:
-                System.out.println("Invalid input");
-        }
-        info();
+        String command;
+        boolean continueLoop = true;
+        do {
+            System.out.println("Write action (buy, fill, take, remaining, exit): ");
+            command = sc.nextLine();
+            switch (command.toLowerCase()) {
+                case "buy":
+                    buy(sc);
+                    break;
+                case "fill":
+                    fill(sc);
+                    break;
+                case "take":
+                    take();
+                    break;
+                case "remaining":
+                    info();
+                    break;
+                case "exit":
+                    continueLoop = false;
+                    break;
+                default:
+                    System.out.println("Invalid input");
+            }
+        }while (continueLoop);
     }
 
     private static void info() {
@@ -35,31 +43,48 @@ public class CoffeeMachine {
         System.out.println(milkSupply + " ml of milk");
         System.out.println(beansSupply + " g of coffee beans");
         System.out.println(cupsSupply + " disposable cups");
-        System.out.println("$" + money + " of money");
+        System.out.println("$" + money + " of money\n");
     }
     public static void buy (Scanner sc) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ");
-        int choice = sc.nextInt();
-        switch (choice) {
-            case 1:
-                waterSupply -= 250;
-                beansSupply -= 16;
-                cupsSupply -= 1;
-                money += 4;
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, " +
+                "back - to main menu: ");
+        String choice = sc.nextLine();
+        switch (choice.toLowerCase()) {
+            case "1":
+                if (waterSupply < 250 || beansSupply < 16 || cupsSupply < 1) System.out.println("Not enough" +                          " resources");
+                else {
+                    waterSupply -= 250;
+                    beansSupply -= 16;
+                    cupsSupply -= 1;
+                    money += 4;
+                    System.out.println("I have enough resources, making you a coffee!");
+                }
                 break;
-            case 2:
-                waterSupply -= 350;
-                milkSupply -= 75;
-                beansSupply -= 20;
-                cupsSupply -= 1;
-                money += 7;
+            case "2":
+                if (waterSupply < 350 || milkSupply < 75 || beansSupply < 20 || cupsSupply < 1)
+                    System.out.println("Not enough resources");
+                else {
+                    waterSupply -= 350;
+                    milkSupply -= 75;
+                    beansSupply -= 20;
+                    cupsSupply -= 1;
+                    money += 7;
+                    System.out.println("I have enough resources, making you a coffee!");
+                }
                 break;
-            case 3:
-                waterSupply -= 200;
-                milkSupply -= 100;
-                beansSupply -= 12;
-                cupsSupply -= 1;
-                money += 6;
+            case "3":
+                if (waterSupply < 200 || milkSupply < 100 || beansSupply < 12 || cupsSupply < 1)
+                    System.out.println("Not enough resources");
+                else {
+                    waterSupply -= 200;
+                    milkSupply -= 100;
+                    beansSupply -= 12;
+                    cupsSupply -= 1;
+                    money += 6;
+                    System.out.println("I have enough resources, making you a coffee!");
+                }
+                break;
+            case "back":
                 break;
             default:
                 System.out.println("Invalid input");
