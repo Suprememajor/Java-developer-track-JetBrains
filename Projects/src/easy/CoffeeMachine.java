@@ -3,11 +3,6 @@ package easy;
 import java.util.Scanner;
 
 public class CoffeeMachine {
-    private static int waterSupply = 400;
-    private static int milkSupply = 540;
-    private static int beansSupply = 120;
-    private static int cupsSupply = 9;
-    private static int money = 550;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String command;
@@ -17,16 +12,16 @@ public class CoffeeMachine {
             command = sc.nextLine();
             switch (command.toLowerCase()) {
                 case "buy":
-                    buy(sc);
+                    CoffeeMachineSimulator.buy(getBuyInput(sc));
                     break;
                 case "fill":
-                    fill(sc);
+                    CoffeeMachineSimulator.fill(getFillInput(sc));
                     break;
                 case "take":
-                    take();
+                    CoffeeMachineSimulator.take();
                     break;
                 case "remaining":
-                    info();
+                    CoffeeMachineSimulator.info();
                     break;
                 case "exit":
                     continueLoop = false;
@@ -36,8 +31,34 @@ public class CoffeeMachine {
             }
         }while (continueLoop);
     }
+    public static String getBuyInput(Scanner sc){
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, " +
+                "back - to main menu: ");
+        return sc.nextLine();
+    }
+    public static int[] getFillInput(Scanner sc) {
+        int[] out = new int[4];
+        System.out.println("Write how many ml of water you want to add: ");
+        out[0] = sc.nextInt();
+        System.out.println("Write how many ml of milk you want to add: ");
+        out[1] = sc.nextInt();
+        System.out.println("Write how many grams of coffee beans you want to add: ");
+        out[2] = sc.nextInt();
+        System.out.println("Write how many disposable cups of coffee you want to add:");
+        out[3] = sc.nextInt();
+        return out;
+    }
 
-    private static void info() {
+}
+class CoffeeMachineSimulator {
+    private static int waterSupply = 400;
+    private static int milkSupply = 540;
+    private static int beansSupply = 120;
+    private static int cupsSupply = 9;
+    private static int money = 550;
+
+
+    public static void info() {
         System.out.println("The coffee machine has:");
         System.out.println(waterSupply + " ml of water");
         System.out.println(milkSupply + " ml of milk");
@@ -45,10 +66,7 @@ public class CoffeeMachine {
         System.out.println(cupsSupply + " disposable cups");
         System.out.println("$" + money + " of money\n");
     }
-    public static void buy (Scanner sc) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, " +
-                "back - to main menu: ");
-        String choice = sc.nextLine();
+    public static void buy (String choice) {
         switch (choice.toLowerCase()) {
             case "1":
                 if (waterSupply < 250 || beansSupply < 16 || cupsSupply < 1) System.out.println("Not enough" +                          " resources");
@@ -90,15 +108,15 @@ public class CoffeeMachine {
                 System.out.println("Invalid input");
         }
     }
-    public static void fill(Scanner sc) {
+    public static void fill(int[] in) {
         System.out.println("Write how many ml of water you want to add: ");
-        waterSupply += sc.nextInt();
+        waterSupply += in[0];
         System.out.println("Write how many ml of milk you want to add: ");
-        milkSupply += sc.nextInt();
+        milkSupply += in[1];
         System.out.println("Write how many grams of coffee beans you want to add: ");
-        beansSupply += sc.nextInt();
+        beansSupply += in[2];
         System.out.println("Write how many disposable cups of coffee you want to add:");
-        cupsSupply += sc.nextInt();
+        cupsSupply += in[3];
     }
     public static void take () {
         System.out.println("I gave you $" + money);
