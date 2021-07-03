@@ -1,67 +1,78 @@
 package easy;
 
+import java.math.BigInteger;
 import java.util.Scanner;
 
 public class NumberBaseConverter {
+    private static int fromBase;
+    private static int toBase;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String choice;
-        boolean continueLoop = true;
-        System.out.print("Do you want to convert /from decimal or /to decimal? (To quit type /exit) ");
-        while (continueLoop){
-            choice = sc.nextLine();
-            if (choice.equalsIgnoreCase("/from")) convertToDiffBase(sc);
-            else if (choice.equalsIgnoreCase("/to")) convertToBase10(sc);
-            else if (choice.equalsIgnoreCase("/exit")) continueLoop = false;
+        boolean continueProgram = true;
+        boolean continueLoop = false;
+        String number;
+        while (continueProgram) {
+            if (!continueLoop) {
+                System.out.print("Enter two numbers in format: {source base} {target base} (To quit type /exit) ");
+                number = sc.nextLine();
+                if (number.equalsIgnoreCase("/exit")) continueProgram = false;
+                else {
+                    String[] input = number.split(" ");
+                    fromBase = Integer.parseInt(input[0]);
+                    toBase = Integer.parseInt(input[1]);
+                    continueLoop = true;
+                }
+            } else {
+                System.out.print("Enter number in base "+ fromBase + " to convert to base " + toBase + " (To go back type /back) ");
+                number = sc.nextLine();
+                if (number.equalsIgnoreCase("/back"))
+                    continueLoop = false;
+                else System.out.println("Conversion result: " + convert(number));
+            }
         }
     }
 
-    public static String getResult(int base, int number) {
+    public static String convertFromBase10(String number) {
         StringBuilder out = new StringBuilder();
         String temp;
-        int remainder;
-        while (number > 0) {
-            remainder = number % base;
+        BigInteger bigInteger = new BigInteger(number);
+        BigInteger base = BigInteger.valueOf(toBase);
+        BigInteger remainder;
+        int num;
+        while (bigInteger.compareTo(BigInteger.ZERO) > 0) {
+            remainder = bigInteger.remainder(base);
             temp = "";
-            if (remainder > 9) {
-                remainder += 55;
-                temp += (char) remainder;
+            if (remainder.compareTo(BigInteger.valueOf(9)) > 0) {
+                num = remainder.intValue();
+                num += 55;
+                temp += (char) num;
             } else {
                 temp += remainder;
             }
-            number /= base;
+            bigInteger = bigInteger.divide(base);
             out.insert(0, temp);
         }
         return out.toString();
     }
-
-    public static void convertToDiffBase(Scanner sc) {
-        System.out.print("Enter a number in decimal system: ");
-        int number = sc.nextInt();
-        System.out.print("Enter the target base: ");
-        int base = sc.nextInt();
-        System.out.println("Conversion result: " + getResult(base, number));
-
-        System.out.print("\nDo you want to convert /from decimal or /to decimal? (To quit type /exit) ");
-    }
-
-    public static void convertToBase10(Scanner sc) {
-        System.out.print("Enter source number: ");
-        String number = sc.nextLine().toUpperCase();
-        System.out.print("Enter source base: ");
-        int base = sc.nextInt();
-        int ans = 0;
-
+    public static String convertToBase10(String number) {
+        BigInteger ans = BigInteger.ZERO;
+        number = number.toUpperCase();
         for (int i = 0, j = number.length() - 1; j >= 0; j--, i++) {
-            if (number.charAt(j) == 'A' || number.charAt(j) == 'B' || number.charAt(j) == 'C' ||
-                    number.charAt(j) == 'D' || number.charAt(j) == 'E' || number.charAt(j) == 'F') {
-                ans += ((((int) number.charAt(j)) - 55 ) * Math.pow(base, i));
+            if (Character.isLetter(number.charAt(j))) {
+                ans = ans.add(BigInteger.valueOf(((((long) number.charAt(j)) - 55 ) * (long) Math.pow(fromBase, i))));
             } else {
-                ans += ( Integer.parseInt(String.valueOf(number.charAt(j))) * Math.pow(base, i));
+                ans = ans.add(BigInteger.valueOf((Long.parseLong(String.valueOf(number.charAt(j))) * (long) Math.pow(fromBase, i))));
             }
         }
-        System.out.println("Conversion to decimal result: " + ans);
-
-        System.out.print("\nDo you want to convert /from decimal or /to decimal? (To quit type /exit) ");
+        return ans.toString();
+    }
+    public static String convert(String number) {
+        if (fromBase == 10) {
+            return convertFromBase10(number);
+        } else if (toBase == 10) {
+            return convertToBase10(number);
+        } else {
+            return convertFromBase10(convertToBase10(number));
+        }
     }
 }
